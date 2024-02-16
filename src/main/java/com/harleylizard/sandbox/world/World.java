@@ -5,6 +5,8 @@ import com.harleylizard.sandbox.tile.TileGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
+import java.util.Set;
+
 public final class World implements TileGetter {
     private final Int2ObjectMap<Column> map = new Int2ObjectArrayMap<>();
 
@@ -26,5 +28,9 @@ public final class World implements TileGetter {
             return column;
         }
         return map.get(l);
+    }
+
+    public Set<Int2ObjectMap.Entry<Column>> getEntries() {
+        return map.int2ObjectEntrySet();
     }
 }

@@ -6,21 +6,30 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class Column implements TileGetter {
-    private final int[] ints = new int[16 * 16 * 16];
+    private final int[] tiles = new int[16 * 16 * 16];
 
     private final Palette<Tile> palette = new Palette<Tile>().add(Tile.AIR);
 
     @Override
     public Tile get(int x, int y) {
-        return palette.getObject(ints[single(x, y)]);
+        return palette.getObject(tiles[single(x, y)]);
     }
 
     @Override
     public void set(int x, int y, Tile tile) {
-        ints[single(x, y)] = palette.getInt(tile);
+        tiles[single(x, y)] = palette.getInt(tile);
+    }
+
+    public int[] copyOf() {
+        return Arrays.copyOf(tiles, tiles.length);
+    }
+
+    public Palette<Tile> getPalette() {
+        return palette;
     }
 
     private static int single(int x, int y) {
@@ -31,7 +40,7 @@ public final class Column implements TileGetter {
         return ((k + y) & 0xFF) * 16 + (x & 0xF);
     }
 
-    private static final class Palette<T> {
+    public static final class Palette<T> {
         private final Object2IntMap<T> map = new Object2IntArrayMap<>();
         private final List<T> list = new ArrayList<>();
 
