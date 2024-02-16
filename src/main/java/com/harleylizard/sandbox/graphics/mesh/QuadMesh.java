@@ -1,14 +1,18 @@
 package com.harleylizard.sandbox.graphics.mesh;
 
+import com.harleylizard.sandbox.graphics.ProgramPipeline;
+import com.harleylizard.sandbox.graphics.Shader;
 import org.lwjgl.system.MemoryStack;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL45.*;
-import static org.lwjgl.opengl.GL45.glVertexArrayElementBuffer;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public final class QuadMesh {
+    private final ProgramPipeline pipeline = new ProgramPipeline.Builder()
+            .attach(Shader.FRAGMENT, "shaders/quad_fragment.glsl")
+            .attach(Shader.VERTEX, "shaders/quad_vertex.glsl")
+            .build();
+
     private final int vao;
     private final int vbo;
     private final int ebo;
@@ -56,6 +60,8 @@ public final class QuadMesh {
     }
 
     public void draw() {
+        pipeline.bind();
+
         glBindVertexArray(vao);
 
         glEnableVertexArrayAttrib(vao, 0);
@@ -65,5 +71,7 @@ public final class QuadMesh {
         glDisableVertexArrayAttrib(vao, 0);
 
         glBindVertexArray(0);
+
+        ProgramPipeline.unbind();
     }
 }

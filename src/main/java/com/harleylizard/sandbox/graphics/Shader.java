@@ -1,9 +1,6 @@
 package com.harleylizard.sandbox.graphics;
 
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL41.GL_FRAGMENT_SHADER_BIT;
-import static org.lwjgl.opengl.GL41.GL_VERTEX_SHADER_BIT;
+import static org.lwjgl.opengl.GL41.*;
 
 public enum Shader {
     FRAGMENT(GL_FRAGMENT_SHADER, GL_FRAGMENT_SHADER_BIT),

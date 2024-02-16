@@ -16,10 +16,11 @@ repositories {
 
 dependencies {
     lwjgl {
-        implementation(Lwjgl.Module.glfw, Lwjgl.Module.opengl, Lwjgl.Module.stb, Lwjgl.Module.core)
+        implementation(Lwjgl.Module.core)
+        implementation(Lwjgl.Module.glfw, Lwjgl.Module.opengl, Lwjgl.Module.stb)
         implementation(Lwjgl.Addons.`joml 1_10_5`)
     }
-    implementation("it.unimi.dsi:fastutil:8.5.12")
+    implementation("it.unimi.dsi:fastutil:8.5.13")
     implementation("com.google.guava:guava:33.0.0-jre")
     implementation("com.google.code.gson:gson:2.10.1")
 

@@ -1,5 +1,6 @@
 package com.harleylizard.sandbox;
 
+import com.harleylizard.sandbox.graphics.Matrices;
 import com.harleylizard.sandbox.graphics.mesh.QuadMesh;
 import com.harleylizard.sandbox.world.World;
 
@@ -21,10 +22,19 @@ public final class Main {
 
         var quad = new QuadMesh();
 
-        glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+        glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+
+        var matrices = new Matrices();
 
         while (!window.shouldClose()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            matrices.identity();
+
+            var aspectRatio = window.aspectRatio();
+            var fovy = (float) Math.toRadians(70.0F);
+            matrices.projection.ortho(-fovy * aspectRatio, fovy * aspectRatio, -fovy, fovy, 1.0F, -1.0F);
+            matrices.upload();
 
             quad.draw();
 
