@@ -21,7 +21,7 @@ public final class ColumnGenerator {
 
             var noise = gradient + random;
             if (noise > 0.5F) {
-                column.set(x, y, Tile.DIRT);
+                column.setTile(x, y, Tile.DIRT);
             }
         }
         addGrass(column, offset);
@@ -36,11 +36,11 @@ public final class ColumnGenerator {
             var gradient = 1.0F - (float) y / 256.0F;
 
             var noise = gradient + hills(seed, x, y) * 0.075F;
-            if (column.get(x, y) == Tile.DIRT && column.get(x, y + 1) == Tile.AIR && noise < 0.6F) {
-                column.set(x, y, Tile.GRASS);
+            if (column.getTile(x, y) == Tile.DIRT && column.getTile(x, y + 1) == Tile.AIR && noise < 0.6F) {
+                column.setTile(x, y, Tile.GRASS);
 
                 if (ThreadLocalRandom.current().nextBoolean()) {
-                    column.set(x, y + 1, Tile.TALL_GRASS);
+                    column.setTile(x, y + 1, Tile.TALL_GRASS);
                 }
             }
         }

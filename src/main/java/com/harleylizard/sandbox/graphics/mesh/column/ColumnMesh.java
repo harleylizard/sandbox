@@ -1,8 +1,9 @@
-package com.harleylizard.sandbox.graphics.mesh;
+package com.harleylizard.sandbox.graphics.mesh.column;
 
+import com.harleylizard.sandbox.graphics.mesh.Lighting;
+import com.harleylizard.sandbox.graphics.mesh.TileTextureGetter;
 import com.harleylizard.sandbox.world.Column;
 import com.harleylizard.sandbox.world.World;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -39,8 +40,7 @@ public final class ColumnMesh {
         }
     }
 
-    public void upload(World world, Int2ObjectMap.Entry<Column> entry) {
-        var column = entry.getValue();
+    public void upload(World world, int key, Column column) {
         var tiles = column.copyOf();
         var palette = column.getPalette();
 
@@ -60,9 +60,9 @@ public final class ColumnMesh {
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var j = tiles[i];
             if (j > 0) {
-                var offset = entry.getIntKey() << 4;
+                var offset = key << 4;
 
-                var scale = 8.0F / 16.0F;
+                var scale = 16.0F / 16.0F;
                 var x = (i % 16) + offset;
                 var y = i / 16;
 

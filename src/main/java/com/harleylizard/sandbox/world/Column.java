@@ -15,12 +15,12 @@ public final class Column implements TileGetter {
     private final Palette<Tile> palette = new Palette<Tile>().add(Tile.AIR);
 
     @Override
-    public Tile get(int x, int y) {
+    public Tile getTile(int x, int y) {
         return palette.getObject(tiles[single(x, y)]);
     }
 
     @Override
-    public void set(int x, int y, Tile tile) {
+    public void setTile(int x, int y, Tile tile) {
         tiles[single(x, y)] = palette.getInt(tile);
     }
 

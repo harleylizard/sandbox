@@ -7,11 +7,10 @@ import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 import org.joml.Vector2f;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class Player implements Entity {
-    private static final BoundingBox BOUNDING_BOX = new BoundingBox(0.0F, 0.0F, 0.5F, 0.5F);
+    private static final BoundingBox BOUNDING_BOX = new BoundingBox(0.0F, 0.0F, 1.0F, 1.0F);
 
     private final BoundingBox boundingBox = new BoundingBox(-0.5F, -0.5F, 0.5F, 0.5F);
 
@@ -21,12 +20,30 @@ public final class Player implements Entity {
 
     private final float speed = 0.25F;
 
+    private int steps;
+
+    {
+        position.y = 150.0F;
+    }
+
     public void stepWithInput(World world, Keyboard keyboard) {
+        steps++;
+
+        world.setTile((int) Math.floor(position.x), (int) position.y, Tile.GRASS);
+
+        // moveOut(world);
+
         if (keyboard.isPressed(GLFW_KEY_A)) {
             velocity.x -= speed;
         }
         if (keyboard.isPressed(GLFW_KEY_D)) {
             velocity.x += speed;
+        }
+        if (keyboard.isPressed(GLFW_KEY_W)) {
+            velocity.y += speed;
+        }
+        if (keyboard.isPressed(GLFW_KEY_S)) {
+            velocity.y -= speed;
         }
 
         step(world);
@@ -44,22 +61,14 @@ public final class Player implements Entity {
         if (velocity.y != 0.0F) {
             velocity.y = Maths.coserp(velocity.y, 0.0F, friction);
         }
-        if (!collidesX(world)) {
-            position.x += velocity.x;
-        }
-        if (!collidesY(world)) {
-            position.y += velocity.y;
-        }
+
+        position.x += velocity.x;
+        position.y += velocity.y;
     }
 
-    private boolean collidesX(World world) {
-        var boundingBox = this.boundingBox.move(position);
-        return false;
-    }
-
-    private boolean collidesY(World world) {
-        var boundingBox = this.boundingBox.move(position);
-        return false;
+    private void moveTowards(Vector2f vector2f) {
+        velocity.x += vector2f.x - position.x;
+        velocity.y += vector2f.y - position.y;
     }
 
     @Override

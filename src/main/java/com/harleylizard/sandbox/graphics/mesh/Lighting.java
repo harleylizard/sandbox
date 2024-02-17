@@ -20,7 +20,7 @@ public final class Lighting {
                 if (distance < smoothness) {
                     var weight = 1.0F / (distance + 1.0F);
 
-                    var tile = world.get(x + j, y + k);
+                    var tile = world.getTile(x + j, y + k);
                     if (tile != Tile.AIR) {
                         intensity += weight;
                     }

@@ -37,10 +37,10 @@ public final class Main {
         var entityMesh = new EntityMesh();
 
         var player = new Player();
-        player.getPosition().set(0.0F, 64.0F);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         while (!window.shouldClose()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -55,13 +55,13 @@ public final class Main {
             var position = player.getPosition();
             var x = position.x;
             var y = position.y;
+
             matrices.view.translate(-x, -y, 0.0F);
             matrices.upload();
+
             worldMesh.draw(world);
 
-            var model = matrices.model;
-            model.identity();
-            model.translate(x, y, 0.0F);
+            matrices.model.translate(x, y, 0.0F);
             matrices.upload();
             entityMesh.draw();
 
