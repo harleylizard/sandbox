@@ -1,6 +1,7 @@
 package com.harleylizard.sandbox.graphics.mesh;
 
 import com.harleylizard.sandbox.world.Column;
+import com.harleylizard.sandbox.world.World;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.lwjgl.system.MemoryStack;
 
@@ -27,16 +28,18 @@ public final class ColumnMesh {
             vbo = buffer.get(1);
             ebo = buffer.get(2);
 
-            glVertexArrayVertexBuffer(vao, 0, vbo, 0, (4 + 3) * 4);
+            glVertexArrayVertexBuffer(vao, 0, vbo, 0, (4 + 3 + 3) * 4);
             glVertexArrayAttribBinding(vao, 0, 0);
             glVertexArrayAttribBinding(vao, 1, 0);
+            glVertexArrayAttribBinding(vao, 2, 0);
             glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, false, 0);
             glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, false, 16);
+            glVertexArrayAttribFormat(vao, 2, 3, GL_FLOAT, false, 28);
             glVertexArrayElementBuffer(vao, ebo);
         }
     }
 
-    public void upload(Int2ObjectMap.Entry<Column> entry) {
+    public void upload(World world, Int2ObjectMap.Entry<Column> entry) {
         var column = entry.getValue();
         var tiles = column.copyOf();
         var palette = column.getPalette();
@@ -50,7 +53,7 @@ public final class ColumnMesh {
         }
         count = 6 * size;
 
-        var vertices = (((4 + 3) * 4) * 4) * size;
+        var vertices = (((4 + 3 + 3) * 4) * 4) * size;
         var elements = (6 * 4) * size;
         var buffer = memCalloc(vertices + elements);
 
@@ -67,10 +70,14 @@ public final class ColumnMesh {
                 var height = scale * y;
 
                 var texture = (float) TileTextureGetter.get(palette.getObject(j));
-                vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture);
-                vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture);
-                vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture);
-                vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture);
+                var light = Lighting.lightFor(world, x, y);
+                var r = light;
+                var g = light;
+                var b = light;
+                vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture, r, g, b);
+                vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture, r, g, b);
+                vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture, r, g, b);
+                vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture, r, g, b);
             }
         }
 
@@ -103,16 +110,18 @@ public final class ColumnMesh {
 
         glEnableVertexArrayAttrib(vao, 0);
         glEnableVertexArrayAttrib(vao, 1);
+        glEnableVertexArrayAttrib(vao, 2);
 
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
 
         glDisableVertexArrayAttrib(vao, 0);
         glDisableVertexArrayAttrib(vao, 1);
+        glDisableVertexArrayAttrib(vao, 2);
 
         glBindVertexArray(0);
     }
 
-    private static void vertex(ByteBuffer buffer, float x, float y, float z, float u, float v, float t) {
-        buffer.putFloat(x).putFloat(y).putFloat(z).putFloat(1.0F).putFloat(u).putFloat(v).putFloat(t);
+    private static void vertex(ByteBuffer buffer, float x, float y, float z, float u, float v, float t, float r, float g, float b) {
+        buffer.putFloat(x).putFloat(y).putFloat(z).putFloat(1.0F).putFloat(u).putFloat(v).putFloat(t).putFloat(r).putFloat(g).putFloat(b);
     }
 }

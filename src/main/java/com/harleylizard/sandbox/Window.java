@@ -1,5 +1,6 @@
 package com.harleylizard.sandbox;
 
+import com.harleylizard.sandbox.input.Keyboard;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
@@ -56,6 +57,12 @@ public final class Window {
 
     public float aspectRatio() {
         return (float) width / (float) height;
+    }
+
+    public void setKeyboard(Keyboard keyboard) {
+        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+            keyboard.setKey(key, action);
+        });
     }
 
     public void destroy() {

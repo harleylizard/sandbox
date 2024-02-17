@@ -3,8 +3,10 @@ package com.harleylizard.sandbox.world;
 import com.harleylizard.sandbox.tile.Tile;
 import kdotjpg.opensimplex2.OpenSimplex2;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public final class ColumnGenerator {
-    private final long seed = 0;
+    private final long seed = ThreadLocalRandom.current().nextLong();
 
     public Column generate(int position) {
         var column = new Column();
@@ -15,7 +17,9 @@ public final class ColumnGenerator {
 
             var gradient = 1.0F - (float) y / 256.0F;
 
-            var noise = gradient + noise(seed, x, y) * 0.075F;
+            var random = ((hills(seed, x, y) * 0.075F) + (rocky(seed, x, y) * 0.015F));
+
+            var noise = gradient + random;
             if (noise > 0.5F) {
                 column.set(x, y, Tile.DIRT);
             }
@@ -31,17 +35,28 @@ public final class ColumnGenerator {
 
             var gradient = 1.0F - (float) y / 256.0F;
 
-            var noise = gradient + noise(seed, x, y) * 0.075F;
+            var noise = gradient + hills(seed, x, y) * 0.075F;
             if (column.get(x, y) == Tile.DIRT && column.get(x, y + 1) == Tile.AIR && noise < 0.6F) {
                 column.set(x, y, Tile.GRASS);
+
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    column.set(x, y + 1, Tile.TALL_GRASS);
+                }
             }
         }
     }
 
-    private static double noise(long seed, int x, int y) {
-        var PERIOD = 64.0;
-        var OFF_X = 512;
-        var OFF_Y = 512;
+    private static double hills(long seed, int x, int y) {
+        var PERIOD = 64.0F;
+        var OFF_X = 8;
+        var OFF_Y = 8;
+        return OpenSimplex2.noise2(seed, (x + OFF_X) * 1.0 / PERIOD, (y + OFF_Y) * 1.0 / PERIOD);
+    }
+
+    private static double rocky(long seed, int x, int y) {
+        var PERIOD = 16.0F;
+        var OFF_X = 1;
+        var OFF_Y = 1;
         return OpenSimplex2.noise2(seed, (x + OFF_X) * 1.0 / PERIOD, (y + OFF_Y) * 1.0 / PERIOD);
     }
 }

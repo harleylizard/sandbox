@@ -13,16 +13,14 @@ import java.util.List;
 
 public final class WorldMesh {
     private final ProgramPipeline pipeline = new ProgramPipeline.Builder()
-            .attach(Shader.FRAGMENT, "shaders/tiles_fragment.glsl")
-            .attach(Shader.VERTEX, "shaders/tiles_vertex.glsl")
+            .attach(Shader.FRAGMENT, "shaders/column_fragment.glsl")
+            .attach(Shader.VERTEX, "shaders/column_vertex.glsl")
             .build();
 
     private final Cache cache = Cache.create(16);
 
     static {
-        TextureArray.of(List.of(
-                "textures/tile/dirt.png",
-                "textures/tile/grass.png"), 8, 8, 0);
+        TextureArray.of(TileTextureGetter.getTextures(), 8, 8, 0);
     }
 
     public void draw(World world) {
@@ -37,7 +35,7 @@ public final class WorldMesh {
             }
             var mesh = cache.get();
             if (mesh != null) {
-                mesh.upload(entry);
+                mesh.upload(world, entry);
             }
         }
 

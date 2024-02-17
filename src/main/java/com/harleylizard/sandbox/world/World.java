@@ -14,11 +14,17 @@ public final class World implements TileGetter {
 
     @Override
     public Tile get(int x, int y) {
+        if (y > 255) {
+            return Tile.AIR;
+        }
         return column(x).get(x, y);
     }
 
     @Override
     public void set(int x, int y, Tile tile) {
+        if (y > 255) {
+            return;
+        }
         column(x).set(x, y, tile);
     }
 

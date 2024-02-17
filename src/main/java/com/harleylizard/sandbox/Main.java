@@ -1,7 +1,11 @@
 package com.harleylizard.sandbox;
 
+import com.harleylizard.sandbox.entity.Player;
 import com.harleylizard.sandbox.graphics.Matrices;
+import com.harleylizard.sandbox.graphics.mesh.EntityMesh;
 import com.harleylizard.sandbox.graphics.mesh.WorldMesh;
+import com.harleylizard.sandbox.input.Keyboard;
+import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -23,24 +27,43 @@ public final class Main {
         }
         var window = new Window();
 
-        glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+        var keyboard = new Keyboard();
+        window.setKeyboard(keyboard);
+
+        glClearColor(198.0F / 255.0F, 234.0F / 255.0F, 1.0F, 1.0F);
 
         var matrices = new Matrices();
         var worldMesh = new WorldMesh();
+        var entityMesh = new EntityMesh();
 
+        var player = new Player();
+        player.getPosition().set(0.0F, 64.0F);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         while (!window.shouldClose()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            player.stepWithInput(world, keyboard);
 
             matrices.identity();
 
             var aspectRatio = window.aspectRatio();
-            var fovy = (float) Math.toRadians(1500.0F);
+            var fovy = (float) Math.toRadians(1000.0F);
             matrices.projection.ortho(-fovy * aspectRatio, fovy * aspectRatio, -fovy, fovy, 1.0F, -1.0F);
 
-            matrices.view.translate(0.0F, -64.0F, 0.0F);
+            var position = player.getPosition();
+            var x = position.x;
+            var y = position.y;
+            matrices.view.translate(-x, -y, 0.0F);
             matrices.upload();
-
             worldMesh.draw(world);
+
+            var model = matrices.model;
+            model.identity();
+            model.translate(x, y, 0.0F);
+            matrices.upload();
+            entityMesh.draw();
 
             window.step();
         }
