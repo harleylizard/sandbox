@@ -1,6 +1,5 @@
 package com.harleylizard.sandbox.graphics.mesh.column;
 
-import com.harleylizard.sandbox.graphics.mesh.Lighting;
 import com.harleylizard.sandbox.graphics.mesh.TileTextureGetter;
 import com.harleylizard.sandbox.world.Column;
 import com.harleylizard.sandbox.world.World;
@@ -69,7 +68,7 @@ public final class ColumnMesh {
                 var width = scale * x;
                 var height = scale * y;
 
-                var texture = (float) TileTextureGetter.get(palette.getObject(j));
+                var texture = (float) TileTextureGetter.getTextureProvider(palette.getObject(j)).getTexture(world, x, y);
                 var light = Lighting.lightFor(world, x, y);
                 var r = light;
                 var g = light;

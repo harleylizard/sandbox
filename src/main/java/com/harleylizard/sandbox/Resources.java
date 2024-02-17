@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.util.Objects;
 
 import static org.lwjgl.system.MemoryUtil.memCalloc;
 import static org.lwjgl.system.MemoryUtil.memRealloc;
@@ -15,7 +16,7 @@ public final class Resources {
     private Resources() {}
 
     public static InputStream get(String path) throws IOException {
-        return Resources.class.getClassLoader().getResource(path).openStream();
+        return Objects.requireNonNull(Resources.class.getClassLoader().getResource(path), "%s is missing".formatted(path)).openStream();
     }
 
     public static String readString(String path) throws IOException {

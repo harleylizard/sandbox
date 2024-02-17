@@ -37,12 +37,8 @@ public final class World implements TileGetter {
 
     private void offerWithNeighbours(int x) {
         var position = x >> 4;
-        var left = position - 1;
-        var right = position + 1;
 
-        queue.offer(IntObjectPair.of(left, null));
         queue.offer(IntObjectPair.of(position, column(x)));
-        queue.offer(IntObjectPair.of(right, null));
     }
 
     private Column column(int x) {

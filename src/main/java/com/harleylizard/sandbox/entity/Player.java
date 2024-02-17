@@ -29,7 +29,7 @@ public final class Player implements Entity {
     public void stepWithInput(World world, Keyboard keyboard) {
         steps++;
 
-        world.setTile((int) Math.floor(position.x), (int) position.y, Tile.GRASS);
+        world.setTile((int) Math.floor(position.x), (int) position.y, Tile.DIRT);
 
         // moveOut(world);
 

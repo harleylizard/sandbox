@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.graphics.mesh;
+package com.harleylizard.sandbox.graphics.mesh.column;
 
 import com.harleylizard.sandbox.math.Maths;
 import com.harleylizard.sandbox.tile.LightEmitter;
@@ -30,7 +30,7 @@ public final class Lighting {
         }
 
         var f = intensity / sum;
-        return Maths.clamp(Maths.coserp(3.0F, 0.1F, f), 0.0F, 1.0F);
+        return Maths.clamp(Maths.coserp(3.0F, 0.0F, f), 0.0F, 1.0F);
     }
 
 
