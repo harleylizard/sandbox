@@ -2,7 +2,6 @@ package com.harleylizard.sandbox;
 
 import com.harleylizard.sandbox.graphics.Matrices;
 import com.harleylizard.sandbox.graphics.mesh.WorldMesh;
-import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -15,10 +14,9 @@ public final class Main {
 
     public static void main(String[] args) {
         var world = new World();
-        world.set(-1, 0, Tile.DIRT);
-        world.set(0, 18, Tile.DIRT);
-        world.set(1, 17, Tile.DIRT);
-        world.set(2, 16, Tile.DIRT);
+        for (var i = -8; i < 8; i++) {
+            world.generate(i);
+        }
 
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
@@ -36,8 +34,10 @@ public final class Main {
             matrices.identity();
 
             var aspectRatio = window.aspectRatio();
-            var fovy = (float) Math.toRadians(1170.0F);
+            var fovy = (float) Math.toRadians(1500.0F);
             matrices.projection.ortho(-fovy * aspectRatio, fovy * aspectRatio, -fovy, fovy, 1.0F, -1.0F);
+
+            matrices.view.translate(0.0F, -64.0F, 0.0F);
             matrices.upload();
 
             worldMesh.draw(world);

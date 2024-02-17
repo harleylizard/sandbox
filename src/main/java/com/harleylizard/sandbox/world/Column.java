@@ -37,7 +37,7 @@ public final class Column implements TileGetter {
         if (k > 15) {
             throw new RuntimeException("Over world height");
         }
-        return ((k + y) & 0xFF) * 16 + (x & 0xF);
+        return (y & 0xFF) * 16 + (x & 0xF);
     }
 
     public static final class Palette<T> {
@@ -46,7 +46,7 @@ public final class Column implements TileGetter {
 
         private Palette() {}
 
-        private T getObject(int i) {
+        public T getObject(int i) {
             return list.isEmpty() ? null : list.get(i);
         }
 

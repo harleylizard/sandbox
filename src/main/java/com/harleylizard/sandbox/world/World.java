@@ -10,6 +10,8 @@ import java.util.Set;
 public final class World implements TileGetter {
     private final Int2ObjectMap<Column> map = new Int2ObjectArrayMap<>();
 
+    private final ColumnGenerator generator = new ColumnGenerator();
+
     @Override
     public Tile get(int x, int y) {
         return column(x).get(x, y);
@@ -28,6 +30,10 @@ public final class World implements TileGetter {
             return column;
         }
         return map.get(l);
+    }
+
+    public void generate(int position) {
+        map.put(position, generator.generate(position));
     }
 
     public Set<Int2ObjectMap.Entry<Column>> getEntries() {

@@ -4,6 +4,8 @@ import com.harleylizard.sandbox.world.Column;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
+
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -25,9 +27,11 @@ public final class ColumnMesh {
             vbo = buffer.get(1);
             ebo = buffer.get(2);
 
-            glVertexArrayVertexBuffer(vao, 0, vbo, 0, 16);
+            glVertexArrayVertexBuffer(vao, 0, vbo, 0, (4 + 3) * 4);
             glVertexArrayAttribBinding(vao, 0, 0);
+            glVertexArrayAttribBinding(vao, 1, 0);
             glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, false, 0);
+            glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, false, 16);
             glVertexArrayElementBuffer(vao, ebo);
         }
     }
@@ -45,18 +49,28 @@ public final class ColumnMesh {
             }
         }
         count = 6 * size;
-        var buffer = memCalloc(((16 + 6) * 4) * size);
+
+        var vertices = (((4 + 3) * 4) * 4) * size;
+        var elements = (6 * 4) * size;
+        var buffer = memCalloc(vertices + elements);
 
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var j = tiles[i];
             if (j > 0) {
                 var offset = entry.getIntKey() << 4;
+
+                var scale = 8.0F / 16.0F;
                 var x = (i % 16) + offset;
                 var y = i / 16;
-                buffer.putFloat(-0.5F + x).putFloat(-0.5F + y).putFloat(0.0F).putFloat(1.0F);
-                buffer.putFloat( 0.5F + x).putFloat(-0.5F + y).putFloat(0.0F).putFloat(1.0F);
-                buffer.putFloat( 0.5F + x).putFloat( 0.5F + y).putFloat(0.0F).putFloat(1.0F);
-                buffer.putFloat(-0.5F + x).putFloat( 0.5F + y).putFloat(0.0F).putFloat(1.0F);
+
+                var width = scale * x;
+                var height = scale * y;
+
+                var texture = (float) TileTextureGetter.get(palette.getObject(j));
+                vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture);
+                vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture);
+                vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture);
+                vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture);
             }
         }
 
@@ -73,9 +87,6 @@ public final class ColumnMesh {
 
         buffer.flip();
 
-        var vertices = (16 * 4) * size;
-        var elements = (6 * 4) * size;
-
         buffer.limit(vertices);
         glNamedBufferData(vbo, buffer, GL_DYNAMIC_DRAW);
         buffer.position(vertices);
@@ -91,11 +102,17 @@ public final class ColumnMesh {
         glBindVertexArray(vao);
 
         glEnableVertexArrayAttrib(vao, 0);
+        glEnableVertexArrayAttrib(vao, 1);
 
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
 
         glDisableVertexArrayAttrib(vao, 0);
+        glDisableVertexArrayAttrib(vao, 1);
 
         glBindVertexArray(0);
+    }
+
+    private static void vertex(ByteBuffer buffer, float x, float y, float z, float u, float v, float t) {
+        buffer.putFloat(x).putFloat(y).putFloat(z).putFloat(1.0F).putFloat(u).putFloat(v).putFloat(t);
     }
 }

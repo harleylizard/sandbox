@@ -2,6 +2,7 @@ package com.harleylizard.sandbox.graphics.mesh;
 
 import com.harleylizard.sandbox.graphics.ProgramPipeline;
 import com.harleylizard.sandbox.graphics.Shader;
+import com.harleylizard.sandbox.graphics.TextureArray;
 import com.harleylizard.sandbox.world.World;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -12,11 +13,17 @@ import java.util.List;
 
 public final class WorldMesh {
     private final ProgramPipeline pipeline = new ProgramPipeline.Builder()
-            .attach(Shader.FRAGMENT, "shaders/quad_fragment.glsl")
-            .attach(Shader.VERTEX, "shaders/quad_vertex.glsl")
+            .attach(Shader.FRAGMENT, "shaders/tiles_fragment.glsl")
+            .attach(Shader.VERTEX, "shaders/tiles_vertex.glsl")
             .build();
 
-    private final Cache cache = Cache.create(2);
+    private final Cache cache = Cache.create(16);
+
+    static {
+        TextureArray.of(List.of(
+                "textures/tile/dirt.png",
+                "textures/tile/grass.png"), 8, 8, 0);
+    }
 
     public void draw(World world) {
         var entries = world.getEntries();

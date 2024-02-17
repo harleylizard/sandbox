@@ -9,7 +9,7 @@ public enum Shader {
     public final int type;
     public final int bit;
 
-    private Shader(int type, int bit) {
+    Shader(int type, int bit) {
         this.type = type;
         this.bit = bit;
     }
