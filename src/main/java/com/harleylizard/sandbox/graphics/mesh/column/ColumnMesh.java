@@ -6,16 +6,22 @@ import com.harleylizard.sandbox.world.World;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public final class ColumnMesh {
+    private final AtomicReference<Runnable> reference = new AtomicReference<>();
+
+    private final AtomicInteger count = new AtomicInteger();
     private final int vao;
     private final int vbo;
     private final int ebo;
-
-    private int count;
 
     {
         try (var stack = MemoryStack.stackPush()) {
@@ -39,79 +45,40 @@ public final class ColumnMesh {
         }
     }
 
-    public void upload(World world, int key, Column column) {
-        var tiles = column.copyOf();
-        var palette = column.getPalette();
+    public void upload(World world, int position, Column column) {
+        ColumnBuffer.of(world, column, position).thenAcceptAsync(columnBuffer -> {
+            var buffer = columnBuffer.getBuffer();
+            var vertices = columnBuffer.getVertices();
+            var elements = columnBuffer.getElements();
 
-        var size = 0;
-        for (var i = 0; i < 16 * 16 * 16; i++) {
-            var j = tiles[i];
-            if (j > 0) {
-                size++;
-            }
-        }
-        count = 6 * size;
+            count.set(columnBuffer.getCount());
 
-        var vertices = (((4 + 3 + 3) * 4) * 4) * size;
-        var elements = (6 * 4) * size;
-        var buffer = memCalloc(vertices + elements);
+            buffer.limit(vertices);
+            glNamedBufferData(vbo, buffer, GL_DYNAMIC_DRAW);
+            buffer.position(vertices);
 
-        for (var i = 0; i < 16 * 16 * 16; i++) {
-            var j = tiles[i];
-            if (j > 0) {
-                var offset = key << 4;
+            buffer.limit(vertices + elements);
+            glNamedBufferData(ebo, buffer, GL_DYNAMIC_DRAW);
+            buffer.position(0);
 
-                var scale = 16.0F / 16.0F;
-                var x = (i % 16) + offset;
-                var y = i / 16;
-
-                var width = scale * x;
-                var height = scale * y;
-
-                var texture = (float) TileTextureGetter.getTextureProvider(palette.getObject(j)).getTexture(world, x, y);
-                var light = Lighting.lightFor(world, x, y);
-                var r = light;
-                var g = light;
-                var b = light;
-                vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture, r, g, b);
-                vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture, r, g, b);
-                vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture, r, g, b);
-                vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture, r, g, b);
-            }
-        }
-
-        for (var i = 0; i < size; i++) {
-            var offset = 4 * i;
-            buffer
-                    .putInt(0 + offset)
-                    .putInt(1 + offset)
-                    .putInt(2 + offset)
-                    .putInt(2 + offset)
-                    .putInt(3 + offset)
-                    .putInt(0 + offset);
-        }
-
-        buffer.flip();
-
-        buffer.limit(vertices);
-        glNamedBufferData(vbo, buffer, GL_DYNAMIC_DRAW);
-        buffer.position(vertices);
-
-        buffer.limit(vertices + elements);
-        glNamedBufferData(ebo, buffer, GL_DYNAMIC_DRAW);
-        buffer.position(0);
-
-        memFree(buffer);
+            memFree(buffer);
+        }, reference::set);
     }
 
     public void draw() {
+        var runnable = reference.get();
+        if (runnable != null) {
+            runnable.run();
+            reference.set(null);
+        }
+
         glBindVertexArray(vao);
 
         glEnableVertexArrayAttrib(vao, 0);
         glEnableVertexArrayAttrib(vao, 1);
         glEnableVertexArrayAttrib(vao, 2);
 
-        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, count.get(), GL_UNSIGNED_INT, 0);
 
         glDisableVertexArrayAttrib(vao, 0);
         glDisableVertexArrayAttrib(vao, 1);

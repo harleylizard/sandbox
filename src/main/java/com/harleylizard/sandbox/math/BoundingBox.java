@@ -27,22 +27,6 @@ public final class BoundingBox {
         return x && y;
     }
 
-    public boolean intersectsBottom(BoundingBox boundingBox) {
-        return maxY >= boundingBox.minY && minY < boundingBox.minY && ((minX >= boundingBox.minX && minX <= boundingBox.maxX) || (maxX >= boundingBox.minX && maxX <= boundingBox.maxX));
-    }
-
-    public boolean intersectsTop(BoundingBox boundingBox) {
-        return minY <= boundingBox.maxY && maxY > boundingBox.maxY && ((minX >= boundingBox.minX && minX <= boundingBox.maxX) || (maxX >= boundingBox.minX && maxX <= boundingBox.maxX));
-    }
-
-    public boolean intersectsRight(BoundingBox boundingBox) {
-        return maxX >= boundingBox.minX && minX < boundingBox.minX && ((minY >= boundingBox.minY && minY <= boundingBox.maxY) || (maxY >= boundingBox.minY && maxY <= boundingBox.maxY));
-    }
-
-    public boolean intersectsLeft(BoundingBox boundingBox) {
-        return minX <= boundingBox.maxX && maxX > boundingBox.maxX && ((minY >= boundingBox.minY && minY <= boundingBox.maxY) || (maxY >= boundingBox.minY && maxY <= boundingBox.maxY));
-    }
-
     public float getMinX() {
         return minX;
     }

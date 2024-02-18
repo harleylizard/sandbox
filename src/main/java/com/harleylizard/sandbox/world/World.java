@@ -13,7 +13,7 @@ import java.util.Set;
 public final class World implements TileGetter {
     private final Int2ObjectMap<Column> map = new Int2ObjectArrayMap<>();
 
-    private final ColumnGenerator generator = new ColumnGenerator();
+    private final WorldGenerator generator = new WorldGenerator();
 
     private final Queue<IntObjectPair<Column>> queue = new LinkedList<>();
 
@@ -22,7 +22,7 @@ public final class World implements TileGetter {
         if (y > 255) {
             return Tile.AIR;
         }
-        return column(x).getTile(x, y);
+        return getOrCreateColumn(x).getTile(x, y);
     }
 
     @Override
@@ -30,18 +30,31 @@ public final class World implements TileGetter {
         if (y > 255) {
             return;
         }
-        var column = column(x);
-        offerWithNeighbours(x);
-        column.setTile(x, y, tile);
+        getOrCreateColumn(x).setTile(x, y, tile);
     }
 
-    private void offerWithNeighbours(int x) {
-        var position = x >> 4;
-
-        queue.offer(IntObjectPair.of(position, column(x)));
+    public void setTileUpdating(int x, int y, Tile tile) {
+        setTile(x, y, tile);
+        updateTileNeighbour(x, y, 0, 1);
+        updateTileNeighbour(x, y, 0, -1);
+        updateTileNeighbour(x, y, 1, 0);
+        updateTileNeighbour(x, y, -1, 0);
+        offer(x);
     }
 
-    private Column column(int x) {
+    private void updateTileNeighbour(int x, int y, int xOffset, int yOffset) {
+        var tile = getTile(x + xOffset, y + yOffset);
+        var behaviour = Tile.getBehaviour(tile);
+        if (behaviour != null) {
+            behaviour.onNeighbourUpdated(this, x + xOffset, y + yOffset);
+        }
+    }
+
+    private void offer(int x) {
+        queue.offer(IntObjectPair.of(x >> 4, getColumn(x)));
+    }
+
+    private Column getOrCreateColumn(int x) {
         var position = x >> 4;
         if (!map.containsKey(position)) {
             var column = new Column();
@@ -57,6 +70,10 @@ public final class World implements TileGetter {
 
     public void generate(int position) {
         map.put(position, generator.generate(position));
+    }
+
+    public void generateStructures(int position) {
+        generator.placeStructures(this, position);
     }
 
     public Set<Int2ObjectMap.Entry<Column>> getEntries() {

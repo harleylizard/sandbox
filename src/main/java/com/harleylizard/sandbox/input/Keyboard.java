@@ -12,7 +12,7 @@ public final class Keyboard {
         return map.get(key);
     }
 
-    public void setKey(int key, int action) {
+    public void setKeyCallback(long window, int key, int scancode, int action, int mods) {
         map.put(key, action != GLFW_RELEASE);
     }
 }

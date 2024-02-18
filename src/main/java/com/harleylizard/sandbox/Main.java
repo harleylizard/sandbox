@@ -3,8 +3,10 @@ package com.harleylizard.sandbox;
 import com.harleylizard.sandbox.entity.Player;
 import com.harleylizard.sandbox.graphics.Matrices;
 import com.harleylizard.sandbox.graphics.mesh.EntityMesh;
+import com.harleylizard.sandbox.graphics.mesh.SkyMesh;
 import com.harleylizard.sandbox.graphics.mesh.WorldMesh;
 import com.harleylizard.sandbox.input.Keyboard;
+import com.harleylizard.sandbox.input.Mouse;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 
@@ -21,6 +23,9 @@ public final class Main {
         for (var i = -8; i < 8; i++) {
             world.generate(i);
         }
+        for (var i = -8; i < 8; i++) {
+            world.generateStructures(i);
+        }
 
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
@@ -28,13 +33,14 @@ public final class Main {
         var window = new Window();
 
         var keyboard = new Keyboard();
-        window.setKeyboard(keyboard);
+        var mouse = new Mouse();
 
-        glClearColor(198.0F / 255.0F, 234.0F / 255.0F, 1.0F, 1.0F);
+        window.setInput(keyboard, mouse);
 
         var matrices = new Matrices();
         var worldMesh = new WorldMesh();
         var entityMesh = new EntityMesh();
+        var skyMesh = new SkyMesh();
 
         var player = new Player();
 
@@ -44,25 +50,30 @@ public final class Main {
         while (!window.shouldClose()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            player.stepWithInput(world, keyboard);
+
 
             matrices.identity();
 
-            var aspectRatio = window.aspectRatio();
+            var aspectRatio = window.getAspectRatio();
             var fovy = (float) Math.toRadians(1000.0F);
             matrices.projection.ortho(-fovy * aspectRatio, fovy * aspectRatio, -fovy, fovy, 1.0F, -1.0F);
+
+            skyMesh.draw();
 
             var position = player.getPosition();
             var x = position.x;
             var y = position.y;
 
             matrices.view.translate(-x, -y, 0.0F);
-            matrices.upload();
+            player.stepWithInput(world, keyboard, mouse, mouse.getWorldSpace(window, matrices.projection, matrices.view, matrices.model));
 
+            matrices.upload();
             worldMesh.draw(world);
 
             matrices.model.translate(x, y, 0.0F);
             matrices.upload();
+
+
             entityMesh.draw();
 
             window.step();

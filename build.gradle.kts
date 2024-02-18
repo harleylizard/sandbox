@@ -35,3 +35,23 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+val proguardJar by tasks.registering(proguard.taskClass) {
+    addInput {
+        classpath.from(tasks.jar)
+    }
+    addOutput {
+        archiveFile.set(base.libsDirectory.file("${project.name}-${project.version}-proguarded.jar"))
+    }
+    jdkModules.add("java.base")
+    mappingFile.set(base.libsDirectory.file("${project.name}-${project.version}-mapping.txt"))
+
+    rules.addAll(
+        "-dontoptimize",
+        "-dontwarn !com.harleylizard.**",
+        "-keep class com.harleylizard.sandbox.Main { public static void main(java.lang.String[]); }",
+        "-keepattributes Signature,InnerClasses,*Annotation*",
+        "-dontusemixedcaseclassnames",
+        "-useuniqueclassmembernames"
+    )
+}

@@ -31,8 +31,8 @@ public final class ProgramPipeline {
 
         public Builder attach(Shader shader, String path) {
             try {
-                var program = glCreateShaderProgramv(shader.type, Resources.readString(path));
-                glUseProgramStages(pipeline, shader.bit, program);
+                var program = glCreateShaderProgramv(shader.getType(), Resources.readString(path));
+                glUseProgramStages(pipeline, shader.getBit(), program);
                 programs.put(shader, program);
             } catch (IOException e) {
                 throw new RuntimeException(e);

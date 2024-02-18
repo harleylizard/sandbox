@@ -1,6 +1,7 @@
 package com.harleylizard.sandbox;
 
 import com.harleylizard.sandbox.input.Keyboard;
+import com.harleylizard.sandbox.input.Mouse;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
@@ -55,14 +56,22 @@ public final class Window {
         return glfwWindowShouldClose(window);
     }
 
-    public float aspectRatio() {
+    public float getAspectRatio() {
         return (float) width / (float) height;
     }
 
-    public void setKeyboard(Keyboard keyboard) {
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            keyboard.setKey(key, action);
-        });
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setInput(Keyboard keyboard, Mouse mouse) {
+        glfwSetKeyCallback(window, keyboard::setKeyCallback);
+        glfwSetMouseButtonCallback(window, mouse::setButtonCallback);
+        glfwSetCursorPosCallback(window, mouse::setCursorCallback);
     }
 
     public void destroy() {

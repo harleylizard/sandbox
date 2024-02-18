@@ -1,5 +1,7 @@
 package com.harleylizard.sandbox.graphics.mesh.provider;
 
+import com.harleylizard.sandbox.tile.Layer;
+import com.harleylizard.sandbox.tile.TileLayers;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -20,8 +22,8 @@ public final class ConnectedTextureProvider implements TextureProvider {
         return map.get(getConnection(world, x, y));
     }
 
-    public static ConnectedTextureProvider of(List<String> paths, String path) {
-        var i = paths.indexOf("textures/tile/%s0.png".formatted(path));
+    public static ConnectedTextureProvider of(List<String> paths, String name) {
+        var i = paths.indexOf("textures/tile/%s0.png".formatted(name));
 
         var map = new Int2IntArrayMap();
         put(map, false, false, false, false, i);
@@ -45,7 +47,7 @@ public final class ConnectedTextureProvider implements TextureProvider {
 
     private static void put(Int2IntMap map, boolean up, boolean down, boolean left, boolean right, int i) {
         var j = toInt(up, down, left, right);
-        if (map.containsKey(i)) {
+        if (map.containsKey(j)) {
             throw new RuntimeException("duplicated value " + j);
         }
         map.put(j, i);
@@ -61,15 +63,16 @@ public final class ConnectedTextureProvider implements TextureProvider {
     }
 
     private static boolean matches(World world, int x, int y) {
-        return world.getTile(x, y) != Tile.AIR;
+        var tile = world.getTile(x, y);
+        return tile != Tile.AIR && TileLayers.getLayer(tile) == Layer.SOLID;
     }
 
     private static int toInt(boolean up, boolean down, boolean left, boolean right) {
         int i = 0;
-        i |= (down ? 1 : 0) << 2;
-        i |= (up ? 1 : 0) << 4;
-        i |= (left ? 1 : 0) << 8;
-        i |= (right ? 1 : 0) << 16;
+        i |= (down ? 1 : 0) << 1;
+        i |= (up ? 1 : 0) << 2;
+        i |= (left ? 1 : 0) << 3;
+        i |= (right ? 1 : 0) << 4;
         return i;
     }
 }

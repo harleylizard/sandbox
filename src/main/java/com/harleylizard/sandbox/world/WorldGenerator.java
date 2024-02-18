@@ -1,12 +1,22 @@
 package com.harleylizard.sandbox.world;
 
+import com.harleylizard.sandbox.structure.TreeStructure;
+import com.harleylizard.sandbox.tile.Layer;
 import com.harleylizard.sandbox.tile.Tile;
+import com.harleylizard.sandbox.tile.TileLayers;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import kdotjpg.opensimplex2.OpenSimplex2;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class ColumnGenerator {
-    private final long seed = ThreadLocalRandom.current().nextLong();
+public final class WorldGenerator {
+    private final long seed = 0;
+
+    private final Random random = new Random(seed);
+
+    private final IntList list = new IntArrayList();
 
     public Column generate(int position) {
         var column = new Column();
@@ -42,6 +52,29 @@ public final class ColumnGenerator {
                 if (ThreadLocalRandom.current().nextBoolean()) {
                     column.setTile(x, y + 1, Tile.TALL_GRASS);
                 }
+            }
+        }
+    }
+
+    public void placeStructures(World world, int position) {
+        var tree = new TreeStructure();
+
+        var offset = position << 4;
+        for (var i = 0; i < 16 * 16 * 16; i++) {
+            var x = (i % 16) + offset;
+            var y = i / 16;
+
+            if (y == 250 && tree.getProbability(random)) {
+                var down = y - 1;
+                while (TileLayers.getLayer(world.getTile(x, down)) == Layer.TRANSPARENT) {
+                    down--;
+                }
+                if (world.getTile(x, down - 1) == Tile.DIRT) {
+                    down++;
+                } else {
+                    continue;
+                }
+                tree.place(world, x, down, random);
             }
         }
     }

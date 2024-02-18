@@ -3,6 +3,7 @@ package com.harleylizard.sandbox.graphics.mesh;
 import com.harleylizard.sandbox.graphics.mesh.provider.ConnectedTextureProvider;
 import com.harleylizard.sandbox.graphics.mesh.provider.SingleTextureProvider;
 import com.harleylizard.sandbox.graphics.mesh.provider.TextureProvider;
+import com.harleylizard.sandbox.graphics.mesh.provider.VariationTextureProvider;
 import com.harleylizard.sandbox.tile.Tile;
 
 import java.util.ArrayList;
@@ -16,26 +17,38 @@ public final class TileTextureGetter {
     private static final Map<Tile, TextureProvider> MAP = Map.of(
             Tile.DIRT,
             ConnectedTextureProvider.of(TEXTURES, "dirt"),
+            Tile.ROOTED_DIRT,
+            SingleTextureProvider.of(TEXTURES, "textures/tile/rooted_dirt.png"),
             Tile.GRASS,
-            SingleTextureProvider.of(TEXTURES, "textures/tile/grass.png"),
+            ConnectedTextureProvider.of(TEXTURES, "grass"),
             Tile.TALL_GRASS,
-            SingleTextureProvider.of(TEXTURES, "textures/tile/tall_grass.png")
+            VariationTextureProvider.of(TEXTURES, "tall_grass", 5),
+            Tile.STONE_BRICK,
+            SingleTextureProvider.of(TEXTURES, "textures/tile/stone_brick.png"),
+            Tile.LOG,
+            SingleTextureProvider.of(TEXTURES, "textures/tile/log.png"),
+            Tile.LEAVES,
+            SingleTextureProvider.of(TEXTURES, "textures/tile/leaves.png")
     );
 
     private TileTextureGetter() {}
 
     private static List<String> createTextures() {
         var list = new ArrayList<String>();
-        addConnected(list, "dirt");
+        addMultiple(list, "dirt", 16);
+        addMultiple(list, "grass", 16);
+        addMultiple(list, "tall_grass", 5);
 
-        list.add("textures/tile/grass.png");
-        list.add("textures/tile/tall_grass.png");
+        list.add("textures/tile/rooted_dirt.png");
+        list.add("textures/tile/stone_brick.png");
+        list.add("textures/tile/log.png");
+        list.add("textures/tile/leaves.png");
 
         return Collections.unmodifiableList(list);
     }
 
-    private static void addConnected(List<String> list, String name) {
-        for (var i = 0; i < 16; i++) {
+    private static void addMultiple(List<String> list, String name, int size) {
+        for (var i = 0; i < size; i++) {
             var s = "textures/tile/%s%d.png".formatted(name, i);
             list.add(s);
         }

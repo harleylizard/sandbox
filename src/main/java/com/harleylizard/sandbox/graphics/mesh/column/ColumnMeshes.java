@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ColumnMeshes {
-    private final IntPriorityQueue queue = new IntArrayFIFOQueue();
-
     private final Int2ObjectMap<ColumnMesh> map = new Int2ObjectArrayMap<>();
     private final List<ColumnMesh> list;
 
@@ -31,7 +29,14 @@ public final class ColumnMeshes {
     public void draw(World world) {
         var queue = world.getQueue();
         if (!queue.isEmpty()) {
-            this.queue.enqueue(queue.poll().firstInt());
+            var position = queue.poll().firstInt();
+
+            var column = world.getColumn(position);
+            var mesh = map.get(position);
+
+            if (column != null && mesh != null) {
+                mesh.upload(world, position, column);
+            }
         }
 
         var entries = world.getEntries();
@@ -45,16 +50,6 @@ public final class ColumnMeshes {
             var mesh = getNext(entry.getIntKey());
             if (mesh != null) {
                 mesh.upload(world, entry.getIntKey(), entry.getValue());
-            }
-        }
-
-        if (!this.queue.isEmpty()) {
-            var position = this.queue.dequeueInt();
-            var column = world.getColumn(position);
-            var mesh = map.get(position);
-
-            if (column != null && mesh != null) {
-                mesh.upload(world, position, column);
             }
         }
 

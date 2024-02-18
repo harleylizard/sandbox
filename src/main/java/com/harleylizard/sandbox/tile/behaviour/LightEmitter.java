@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.tile;
+package com.harleylizard.sandbox.tile.behaviour;
 
 import com.harleylizard.sandbox.math.ImmutableVector3f;
 
