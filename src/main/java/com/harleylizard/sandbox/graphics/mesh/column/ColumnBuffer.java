@@ -1,7 +1,7 @@
 package com.harleylizard.sandbox.graphics.mesh.column;
 
 import com.harleylizard.sandbox.graphics.mesh.TileTextureGetter;
-import com.harleylizard.sandbox.world.Column;
+import com.harleylizard.sandbox.layer.LayerColumn;
 import com.harleylizard.sandbox.world.World;
 
 import java.nio.ByteBuffer;
@@ -39,63 +39,58 @@ public final class ColumnBuffer {
         return count;
     }
 
-    public static CompletableFuture<ColumnBuffer> of(World world, Column column, int position) {
-        return CompletableFuture.supplyAsync(() -> {
-            var tiles = column.copyOf();
-            var palette = column.getPalette();
-
-            var size = 0;
-            for (var i = 0; i < 16 * 16 * 16; i++) {
-                var j = tiles[i];
-                if (j > 0) {
-                    size++;
-                }
+    public static ColumnBuffer of(World world, LayerColumn column, int position) {
+        var size = 0;
+        for (var entry : column) {
+            if (entry.getTile() > 0) {
+                size++;
             }
-            var count = 6 * size;
+        }
+        var palette = column.getPalette();
+        var count = 6 * size;
 
-            var vertices = (((4 + 3 + 3) * 4) * 4) * size;
-            var elements = (6 * 4) * size;
-            var buffer = memCalloc(vertices + elements);
+        var vertices = (((4 + 3 + 3) * 4) * 4) * size;
+        var elements = (6 * 4) * size;
+        var buffer = memCalloc(vertices + elements);
 
-            for (var i = 0; i < 16 * 16 * 16; i++) {
-                var j = tiles[i];
-                if (j > 0) {
-                    var offset = position << 4;
+        for (var entry : column) {
+            var tile = entry.getTile();
+            if (tile > 0) {
+                var offset = position << 4;
 
-                    var scale = 16.0F / 16.0F;
-                    var x = (i % 16) + offset;
-                    var y = i / 16;
+                var scale = 16.0F / 16.0F;
+                var x = entry.getX() + offset;
+                var y = entry.getY();
 
-                    var width = scale * x;
-                    var height = scale * y;
+                var width = scale * x;
+                var height = scale * y;
 
-                    var texture = (float) TileTextureGetter.getTextureProvider(palette.getObject(j)).getTexture(world, x, y);
-                    var light = LightingCalculator.lightFor(world, x, y);
-                    var r = light;
-                    var g = light;
-                    var b = light;
-                    vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture, r, g, b);
-                    vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture, r, g, b);
-                    vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture, r, g, b);
-                    vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture, r, g, b);
-                }
+                var texture = (float) TileTextureGetter.getTextureProvider(palette.getObject(tile)).getTexture(world, x, y);
+                var light = LightingCalculator.lightFor(world, x, y);
+                var r = light;
+                var g = light;
+                var b = light;
+                vertex(buffer,  0.0F + width, 0.0F + height, 0.0F, 0.0F, 1.0F, texture, r, g, b);
+                vertex(buffer, scale + width, 0.0F + height, 0.0F, 1.0F, 1.0F, texture, r, g, b);
+                vertex(buffer, scale + width, scale + height, 0.0F, 1.0F, 0.0F, texture, r, g, b);
+                vertex(buffer,  0.0F + width, scale + height, 0.0F, 0.0F, 0.0F, texture, r, g, b);
             }
+        }
 
-            for (var i = 0; i < size; i++) {
-                var offset = 4 * i;
-                buffer
-                        .putInt(0 + offset)
-                        .putInt(1 + offset)
-                        .putInt(2 + offset)
-                        .putInt(2 + offset)
-                        .putInt(3 + offset)
-                        .putInt(0 + offset);
-            }
+        for (var i = 0; i < size; i++) {
+            var offset = 4 * i;
+            buffer
+                    .putInt(0 + offset)
+                    .putInt(1 + offset)
+                    .putInt(2 + offset)
+                    .putInt(2 + offset)
+                    .putInt(3 + offset)
+                    .putInt(0 + offset);
+        }
 
-            buffer.flip();
+        buffer.flip();
 
-            return new ColumnBuffer(vertices, elements, count, buffer);
-        });
+        return new ColumnBuffer(vertices, elements, count, buffer);
     }
 
     private static void vertex(ByteBuffer buffer, float x, float y, float z, float u, float v, float t, float r, float g, float b) {

@@ -1,5 +1,6 @@
 package com.harleylizard.sandbox.world;
 
+import com.harleylizard.sandbox.layer.LayerColumn;
 import com.harleylizard.sandbox.structure.TreeStructure;
 import com.harleylizard.sandbox.tile.Layer;
 import com.harleylizard.sandbox.tile.Tile;
@@ -18,8 +19,8 @@ public final class WorldGenerator {
 
     private final IntList list = new IntArrayList();
 
-    public Column generate(int position) {
-        var column = new Column();
+    public LayerColumn generate(int position) {
+        var column = new LayerColumn();
         var offset = position << 4;
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var x = (i % 16) + offset;
@@ -38,7 +39,7 @@ public final class WorldGenerator {
         return column;
     }
 
-    private void addGrass(Column column, int offset) {
+    private void addGrass(LayerColumn column, int offset) {
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var x = (i % 16) + offset;
             var y = i / 16;

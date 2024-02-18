@@ -1,16 +1,12 @@
 package com.harleylizard.sandbox.graphics.mesh.column;
 
-import com.harleylizard.sandbox.graphics.mesh.TileTextureGetter;
-import com.harleylizard.sandbox.world.Column;
+import com.harleylizard.sandbox.layer.LayerColumn;
 import com.harleylizard.sandbox.world.World;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -45,24 +41,23 @@ public final class ColumnMesh {
         }
     }
 
-    public void upload(World world, int position, Column column) {
-        ColumnBuffer.of(world, column, position).thenAcceptAsync(columnBuffer -> {
-            var buffer = columnBuffer.getBuffer();
-            var vertices = columnBuffer.getVertices();
-            var elements = columnBuffer.getElements();
+    public void upload(World world, int position, LayerColumn column) {
+        var columnBuffer = ColumnBuffer.of(world, column, position);
+        var buffer = columnBuffer.getBuffer();
+        var vertices = columnBuffer.getVertices();
+        var elements = columnBuffer.getElements();
 
-            count.set(columnBuffer.getCount());
+        count.set(columnBuffer.getCount());
 
-            buffer.limit(vertices);
-            glNamedBufferData(vbo, buffer, GL_DYNAMIC_DRAW);
-            buffer.position(vertices);
+        buffer.limit(vertices);
+        glNamedBufferData(vbo, buffer, GL_DYNAMIC_DRAW);
+        buffer.position(vertices);
 
-            buffer.limit(vertices + elements);
-            glNamedBufferData(ebo, buffer, GL_DYNAMIC_DRAW);
-            buffer.position(0);
+        buffer.limit(vertices + elements);
+        glNamedBufferData(ebo, buffer, GL_DYNAMIC_DRAW);
+        buffer.position(0);
 
-            memFree(buffer);
-        }, reference::set);
+        memFree(buffer);
     }
 
     public void draw() {

@@ -27,6 +27,7 @@ public final class Main {
             world.generateStructures(i);
         }
 
+
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
@@ -49,8 +50,6 @@ public final class Main {
 
         while (!window.shouldClose()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
 
             matrices.identity();
 

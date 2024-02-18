@@ -1,5 +1,6 @@
 package com.harleylizard.sandbox.world;
 
+import com.harleylizard.sandbox.layer.LayerColumn;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.tile.TileGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -11,11 +12,11 @@ import java.util.Queue;
 import java.util.Set;
 
 public final class World implements TileGetter {
-    private final Int2ObjectMap<Column> map = new Int2ObjectArrayMap<>();
+    private final Int2ObjectMap<LayerColumn> map = new Int2ObjectArrayMap<>();
 
     private final WorldGenerator generator = new WorldGenerator();
 
-    private final Queue<IntObjectPair<Column>> queue = new LinkedList<>();
+    private final Queue<IntObjectPair<LayerColumn>> queue = new LinkedList<>();
 
     @Override
     public Tile getTile(int x, int y) {
@@ -54,17 +55,17 @@ public final class World implements TileGetter {
         queue.offer(IntObjectPair.of(x >> 4, getColumn(x)));
     }
 
-    private Column getOrCreateColumn(int x) {
+    private LayerColumn getOrCreateColumn(int x) {
         var position = x >> 4;
         if (!map.containsKey(position)) {
-            var column = new Column();
+            var column = new LayerColumn();
             map.put(position, column);
             return column;
         }
         return map.get(position);
     }
 
-    public Column getColumn(int position) {
+    public LayerColumn getColumn(int position) {
         return map.get(position);
     }
 
@@ -76,11 +77,11 @@ public final class World implements TileGetter {
         generator.placeStructures(this, position);
     }
 
-    public Set<Int2ObjectMap.Entry<Column>> getEntries() {
+    public Set<Int2ObjectMap.Entry<LayerColumn>> getEntries() {
         return map.int2ObjectEntrySet();
     }
 
-    public Queue<IntObjectPair<Column>> getQueue() {
+    public Queue<IntObjectPair<LayerColumn>> getQueue() {
         return queue;
     }
 }
