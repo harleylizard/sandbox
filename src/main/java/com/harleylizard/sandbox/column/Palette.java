@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.layer;
+package com.harleylizard.sandbox.column;
 
 public interface Palette<T> {
 

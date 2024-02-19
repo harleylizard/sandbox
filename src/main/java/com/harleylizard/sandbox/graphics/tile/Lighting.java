@@ -1,13 +1,11 @@
-package com.harleylizard.sandbox.graphics.mesh.column;
+package com.harleylizard.sandbox.graphics.tile;
 
-import com.harleylizard.sandbox.tile.Layer;
-import com.harleylizard.sandbox.tile.TileLayers;
 import com.harleylizard.sandbox.math.Maths;
 import com.harleylizard.sandbox.world.World;
 
-public final class LightingCalculator {
+public final class Lighting {
 
-    private LightingCalculator() {}
+    private Lighting() {}
 
     public static float lightFor(World world, int x, int y) {
         var intensity = 0.0F;
@@ -21,7 +19,7 @@ public final class LightingCalculator {
                     var weight = 1.0F / (distance + 1.0F);
 
                     var tile = world.getTile(x + j, y + k);
-                    if (TileLayers.getLayer(tile) != Layer.TRANSPARENT) {
+                    if (Flags.is(tile, Flags.SOLID)) {
                         intensity += weight;
                     }
                     sum += weight;

@@ -38,8 +38,8 @@ public final class SkyMesh {
 
         var buffer = memCalloc((28 + 6) * 4);
 
-        var width = 128.0F;
-        var height = 24.0F;
+        var width = 854.0F / 16.0F;
+        var height = 480.0F / 16.0F;
 
         buffer.putFloat(-width).putFloat(-height).putFloat(0.0F).putFloat(1.0F).putFloat(214.0F / 255.0F).putFloat(232.0F / 255.0F).putFloat(1.0F);
         buffer.putFloat( width).putFloat(-height).putFloat(0.0F).putFloat(1.0F).putFloat(214.0F / 255.0F).putFloat(232.0F / 255.0F).putFloat(1.0F);

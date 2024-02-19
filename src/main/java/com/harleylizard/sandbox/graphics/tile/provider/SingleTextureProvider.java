@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.graphics.mesh.provider;
+package com.harleylizard.sandbox.graphics.tile.provider;
 
 import com.harleylizard.sandbox.world.World;
 

@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.layer;
+package com.harleylizard.sandbox.column;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -37,10 +37,6 @@ public final class MutablePalette<T> implements Palette<T> {
             return i;
         }
         return map.getInt(t);
-    }
-
-    public boolean hasObject(T t) {
-        return map.containsKey(t);
     }
 
     public Palette<T> toImmutable() {

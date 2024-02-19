@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.layer;
+package com.harleylizard.sandbox.column;
 
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.tile.TileGetter;
@@ -6,11 +6,14 @@ import com.harleylizard.sandbox.util.ImmutableIterator;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.locks.ReentrantLock;
 
-public final class LayerColumn implements TileGetter, Iterable<LayerColumn.Entry> {
+public final class LayeredColumn implements TileGetter, Iterable<LayeredColumn.Entry> {
     private static final int SIZE = 16 * 16 * 16;
     private final int[] tiles = new int[SIZE];
     private final MutablePalette<Tile> palette = MutablePalette.of(Tile.AIR);
+
+    private final ReentrantLock lock = new ReentrantLock();
 
     @Override
     public Tile getTile(int x, int y) {
@@ -26,7 +29,6 @@ public final class LayerColumn implements TileGetter, Iterable<LayerColumn.Entry
         return palette.toImmutable();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<Entry> iterator() {
         var list = new LinkedList<Entry>();

@@ -1,9 +1,9 @@
 package com.harleylizard.sandbox.graphics.mesh;
 
-import com.harleylizard.sandbox.graphics.mesh.provider.ConnectedTextureProvider;
-import com.harleylizard.sandbox.graphics.mesh.provider.SingleTextureProvider;
-import com.harleylizard.sandbox.graphics.mesh.provider.TextureProvider;
-import com.harleylizard.sandbox.graphics.mesh.provider.VariationTextureProvider;
+import com.harleylizard.sandbox.graphics.tile.provider.ConnectedTextureProvider;
+import com.harleylizard.sandbox.graphics.tile.provider.SingleTextureProvider;
+import com.harleylizard.sandbox.graphics.tile.provider.TextureProvider;
+import com.harleylizard.sandbox.graphics.tile.provider.VariationTextureProvider;
 import com.harleylizard.sandbox.tile.Tile;
 
 import java.util.ArrayList;

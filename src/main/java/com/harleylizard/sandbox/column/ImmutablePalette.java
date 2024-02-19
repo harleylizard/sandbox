@@ -1,4 +1,4 @@
-package com.harleylizard.sandbox.layer;
+package com.harleylizard.sandbox.column;
 
 public final class ImmutablePalette<T> implements Palette<T> {
     private final Palette<T> palette;

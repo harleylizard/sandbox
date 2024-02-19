@@ -7,7 +7,6 @@ import com.harleylizard.sandbox.graphics.mesh.SkyMesh;
 import com.harleylizard.sandbox.graphics.mesh.WorldMesh;
 import com.harleylizard.sandbox.input.Keyboard;
 import com.harleylizard.sandbox.input.Mouse;
-import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
