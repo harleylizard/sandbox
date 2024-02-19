@@ -1,6 +1,6 @@
 package com.harleylizard.sandbox.graphics.mesh.column;
 
-import com.harleylizard.sandbox.column.LayeredColumn;
+import com.harleylizard.sandbox.layer.MutableLayeredColumn;
 import com.harleylizard.sandbox.world.World;
 import org.lwjgl.system.MemoryStack;
 
@@ -41,7 +41,7 @@ public final class ColumnMesh {
         }
     }
 
-    public void upload(World world, int position, LayeredColumn column) {
+    public void upload(World world, int position, MutableLayeredColumn column) {
         ColumnBuffer.of(world, column, position).thenAcceptAsync(columnBuffer -> {
             var buffer = columnBuffer.getBuffer();
             var vertices = columnBuffer.getVertices();

@@ -1,8 +1,9 @@
 package com.harleylizard.sandbox.world;
 
-import com.harleylizard.sandbox.column.LayeredColumn;
+import com.harleylizard.sandbox.layer.Layer;
+import com.harleylizard.sandbox.layer.MutableLayeredColumn;
 import com.harleylizard.sandbox.structure.TreeStructure;
-import com.harleylizard.sandbox.tile.Layer;
+import com.harleylizard.sandbox.tile.TransparencyLayer;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.tile.TileLayers;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -19,8 +20,8 @@ public final class WorldGenerator {
 
     private final IntList list = new IntArrayList();
 
-    public LayeredColumn generate(int position) {
-        var column = new LayeredColumn();
+    public MutableLayeredColumn generate(int position) {
+        var column = new MutableLayeredColumn();
         var offset = position << 4;
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var x = (i % 16) + offset;
@@ -32,14 +33,14 @@ public final class WorldGenerator {
 
             var noise = gradient + random;
             if (noise > 0.5F) {
-                column.setTile(x, y, Tile.DIRT);
+                column.setTile(Layer.FOREGROUND, x, y, Tile.DIRT);
             }
         }
         addGrass(column, offset);
         return column;
     }
 
-    private void addGrass(LayeredColumn column, int offset) {
+    private void addGrass(MutableLayeredColumn column, int offset) {
         for (var i = 0; i < 16 * 16 * 16; i++) {
             var x = (i % 16) + offset;
             var y = i / 16;
@@ -47,11 +48,11 @@ public final class WorldGenerator {
             var gradient = 1.0F - (float) y / 256.0F;
 
             var noise = gradient + hills(seed, x, y) * 0.075F;
-            if (column.getTile(x, y) == Tile.DIRT && column.getTile(x, y + 1) == Tile.AIR && noise < 0.6F) {
-                column.setTile(x, y, Tile.GRASS);
+            if (column.getTile(Layer.FOREGROUND, x, y) == Tile.DIRT && column.getTile(Layer.FOREGROUND, x, y + 1) == Tile.AIR && noise < 0.6F) {
+                column.setTile(Layer.FOREGROUND, x, y, Tile.GRASS);
 
                 if (ThreadLocalRandom.current().nextBoolean()) {
-                    column.setTile(x, y + 1, Tile.TALL_GRASS);
+                    column.setTile(Layer.FOREGROUND, x, y + 1, Tile.TALL_GRASS);
                 }
             }
         }
@@ -67,10 +68,10 @@ public final class WorldGenerator {
 
             if (y == 250 && tree.getProbability(random)) {
                 var down = y - 1;
-                while (TileLayers.getLayer(world.getTile(x, down)) == Layer.TRANSPARENT) {
+                while (TileLayers.getLayer(world.getTile(Layer.FOREGROUND, x, down)) == TransparencyLayer.TRANSPARENT) {
                     down--;
                 }
-                if (world.getTile(x, down - 1) == Tile.DIRT) {
+                if (world.getTile(Layer.FOREGROUND, x, down - 1) == Tile.DIRT) {
                     down++;
                 } else {
                     continue;

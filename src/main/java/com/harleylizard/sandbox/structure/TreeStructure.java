@@ -1,6 +1,7 @@
 package com.harleylizard.sandbox.structure;
 
-import com.harleylizard.sandbox.tile.Layer;
+import com.harleylizard.sandbox.layer.Layer;
+import com.harleylizard.sandbox.tile.TransparencyLayer;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.tile.TileLayers;
 import com.harleylizard.sandbox.world.World;
@@ -12,7 +13,7 @@ public final class TreeStructure implements Structure {
     public void place(World world, int x, int y, Random random) {
         var height = random.nextInt(15) == 0 ? 24 : 20;
         for (var i = 0; i < height; i++) {
-            world.setTile(x, y + i, Tile.LOG);
+            world.setTile(Layer.FOREGROUND, x, y + i, Tile.LOG);
 
             if (i > height - 10) {
                 var f = ((float) height / 24.0F) * 4.0F;
@@ -20,7 +21,7 @@ public final class TreeStructure implements Structure {
             }
         }
 
-        world.setTile(x, y - 1, Tile.ROOTED_DIRT);
+        world.setTile(Layer.FOREGROUND, x, y - 1, Tile.ROOTED_DIRT);
     }
 
     private void createBranch(World world, int x, int y, int branchRate, Random random) {
@@ -32,7 +33,7 @@ public final class TreeStructure implements Structure {
         var direction = random.nextBoolean() ? 1 : -1;
         var xOffset = direction;
         for (var i = 0; i < length; i++) {
-            world.setTile(x + xOffset, y + i, Tile.LOG);
+            world.setTile(Layer.FOREGROUND, x + xOffset, y + i, Tile.LOG);
             if (random.nextInt(2) == 0) {
                 xOffset += direction;
             }
@@ -49,10 +50,10 @@ public final class TreeStructure implements Structure {
                 if (distance < 4) {
                     var m = x + j;
                     var n = y + height + k;
-                    if (TileLayers.getLayer(world.getTile(m, n)) == Layer.TRANSPARENT) {
-                        world.setTile(m, n, Tile.LEAVES);
+                    if (TileLayers.getLayer(world.getTile(Layer.FOREGROUND, m, n)) == TransparencyLayer.TRANSPARENT) {
+                        world.setTile(Layer.FOREGROUND, m, n, Tile.LEAVES);
                         if (random.nextInt(4) == 0) {
-                            world.setTile(m, n, Tile.AIR);
+                            world.setTile(Layer.FOREGROUND, m, n, Tile.AIR);
                         }
                     }
                 }

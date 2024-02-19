@@ -1,6 +1,7 @@
 package com.harleylizard.sandbox.world;
 
-import com.harleylizard.sandbox.column.LayeredColumn;
+import com.harleylizard.sandbox.layer.Layer;
+import com.harleylizard.sandbox.layer.MutableLayeredColumn;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.tile.TileGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -12,30 +13,29 @@ import java.util.Queue;
 import java.util.Set;
 
 public final class World implements TileGetter {
-    private final Int2ObjectMap<LayeredColumn> map = new Int2ObjectArrayMap<>();
+    private final Int2ObjectMap<MutableLayeredColumn> map = new Int2ObjectArrayMap<>();
 
     private final WorldGenerator generator = new WorldGenerator();
 
-    private final Queue<IntObjectPair<LayeredColumn>> queue = new LinkedList<>();
+    private final Queue<IntObjectPair<MutableLayeredColumn>> queue = new LinkedList<>();
 
     @Override
-    public Tile getTile(int x, int y) {
+    public Tile getTile(Layer layer, int x, int y) {
         if (y > 255) {
             return Tile.AIR;
         }
-        return getOrCreateColumn(x).getTile(x, y);
+        return getOrCreateColumn(x).getTile(layer, x, y);
     }
 
-    @Override
-    public void setTile(int x, int y, Tile tile) {
+    public void setTile(Layer layer, int x, int y, Tile tile) {
         if (y > 255) {
             return;
         }
-        getOrCreateColumn(x).setTile(x, y, tile);
+        getOrCreateColumn(x).setTile(layer, x, y, tile);
     }
 
     public void setTileUpdating(int x, int y, Tile tile) {
-        setTile(x, y, tile);
+        setTile(Layer.FOREGROUND, x, y, tile);
         updateTileNeighbour(x, y, 0, 1);
         updateTileNeighbour(x, y, 0, -1);
         updateTileNeighbour(x, y, 1, 0);
@@ -44,7 +44,7 @@ public final class World implements TileGetter {
     }
 
     private void updateTileNeighbour(int x, int y, int xOffset, int yOffset) {
-        var tile = getTile(x + xOffset, y + yOffset);
+        var tile = getTile(Layer.FOREGROUND, x + xOffset, y + yOffset);
         var behaviour = Tile.getBehaviour(tile);
         if (behaviour != null) {
             behaviour.onNeighbourUpdated(this, x + xOffset, y + yOffset);
@@ -56,17 +56,17 @@ public final class World implements TileGetter {
         queue.offer(IntObjectPair.of(i,null));
     }
 
-    private LayeredColumn getOrCreateColumn(int x) {
+    private MutableLayeredColumn getOrCreateColumn(int x) {
         var position = x >> 4;
         if (!map.containsKey(position)) {
-            var column = new LayeredColumn();
+            var column = new MutableLayeredColumn();
             map.put(position, column);
             return column;
         }
         return map.get(position);
     }
 
-    public LayeredColumn getColumn(int position) {
+    public MutableLayeredColumn getColumn(int position) {
         return map.get(position);
     }
 
@@ -78,11 +78,11 @@ public final class World implements TileGetter {
         generator.placeStructures(this, position);
     }
 
-    public Set<Int2ObjectMap.Entry<LayeredColumn>> getEntries() {
+    public Set<Int2ObjectMap.Entry<MutableLayeredColumn>> getEntries() {
         return map.int2ObjectEntrySet();
     }
 
-    public Queue<IntObjectPair<LayeredColumn>> getQueue() {
+    public Queue<IntObjectPair<MutableLayeredColumn>> getQueue() {
         return queue;
     }
 }

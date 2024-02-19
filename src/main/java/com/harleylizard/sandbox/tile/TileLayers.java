@@ -3,28 +3,28 @@ package com.harleylizard.sandbox.tile;
 import java.util.Map;
 
 public final class TileLayers {
-    private static final Map<Tile, Layer> MAP = Map.of(
+    private static final Map<Tile, TransparencyLayer> MAP = Map.of(
             Tile.AIR,
-            Layer.TRANSPARENT,
+            TransparencyLayer.TRANSPARENT,
             Tile.DIRT,
-            Layer.SOLID,
+            TransparencyLayer.SOLID,
             Tile.ROOTED_DIRT,
-            Layer.SOLID,
+            TransparencyLayer.SOLID,
             Tile.GRASS,
-            Layer.SOLID,
+            TransparencyLayer.SOLID,
             Tile.TALL_GRASS,
-            Layer.TRANSPARENT,
+            TransparencyLayer.TRANSPARENT,
             Tile.STONE_BRICK,
-            Layer.SOLID,
+            TransparencyLayer.SOLID,
             Tile.LOG,
-            Layer.SOLID,
+            TransparencyLayer.SOLID,
             Tile.LEAVES,
-            Layer.SOLID
+            TransparencyLayer.SOLID
     );
 
     private TileLayers() {}
 
-    public static Layer getLayer(Tile tile) {
+    public static TransparencyLayer getLayer(Tile tile) {
         return MAP.get(tile);
     }
 }

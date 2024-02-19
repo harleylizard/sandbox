@@ -1,6 +1,6 @@
 package com.harleylizard.sandbox.tile;
 
-public enum Layer {
+public enum TransparencyLayer {
     SOLID,
     TRANSPARENT
 }

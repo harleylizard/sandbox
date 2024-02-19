@@ -9,12 +9,10 @@ import com.harleylizard.sandbox.world.World;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class Player implements Entity {
-    private static final BoundingBox BOUNDING_BOX = new BoundingBox(0.0F, 0.0F, 1.0F, 1.0F);
+    private static final BoundingBox BOUNDING_BOX = new BoundingBox(-0.5F, -0.5F, 0.5F, 0.5F);
 
     private final BoundingBox boundingBox = new BoundingBox(-0.5F, -0.5F, 0.5F, 0.5F);
 

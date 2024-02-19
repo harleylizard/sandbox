@@ -1,5 +1,6 @@
 package com.harleylizard.sandbox.graphics.tile;
 
+import com.harleylizard.sandbox.layer.Layer;
 import com.harleylizard.sandbox.math.Maths;
 import com.harleylizard.sandbox.world.World;
 
@@ -18,7 +19,7 @@ public final class Lighting {
                 if (distance < smoothness) {
                     var weight = 1.0F / (distance + 1.0F);
 
-                    var tile = world.getTile(x + j, y + k);
+                    var tile = world.getTile(Layer.FOREGROUND, x + j, y + k);
                     if (Flags.is(tile, Flags.SOLID)) {
                         intensity += weight;
                     }

@@ -1,6 +1,6 @@
 package com.harleylizard.sandbox.graphics.mesh.column;
 
-import com.harleylizard.sandbox.column.LayeredColumn;
+import com.harleylizard.sandbox.layer.MutableLayeredColumn;
 import com.harleylizard.sandbox.graphics.mesh.TileTextureGetter;
 import com.harleylizard.sandbox.graphics.tile.Lighting;
 import com.harleylizard.sandbox.world.World;
@@ -40,7 +40,7 @@ public final class ColumnBuffer {
         return count;
     }
 
-    public static CompletableFuture<ColumnBuffer> of(World world, LayeredColumn column, int position) {
+    public static CompletableFuture<ColumnBuffer> of(World world, MutableLayeredColumn column, int position) {
         return CompletableFuture.supplyAsync(() -> {
             var size = 0;
             for (var entry : column) {

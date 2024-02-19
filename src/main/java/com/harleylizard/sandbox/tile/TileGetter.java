@@ -1,8 +1,8 @@
 package com.harleylizard.sandbox.tile;
 
+import com.harleylizard.sandbox.layer.Layer;
+
 public interface TileGetter {
 
-    Tile getTile(int x, int y);
-
-    void setTile(int x, int y, Tile tile);
+    Tile getTile(Layer layer, int x, int y);
 }
