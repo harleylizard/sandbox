@@ -8,8 +8,8 @@ import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 public final class Flags {
     public static final int SOLID = 1;
     public static final int TRANSPARENT = 2;
-    public static final int TINTED = 3;
-    public static final int WAVY = 4;
+    public static final int TINTED = 101;
+    public static final int WAVY = 102;
 
     private static final Object2IntMap<Tile> MAP = createImmutable();
 

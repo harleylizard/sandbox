@@ -5,19 +5,34 @@ import com.harleylizard.sandbox.util.ImmutableIterator;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class MutableLayeredColumn implements LayeredColumn {
     private static final int SIZE = 16 * 256 * 2;
     private final int[] tiles = new int[SIZE];
     private final MutablePalette<Tile> palette = MutablePalette.of(Tile.AIR);
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     @Override
     public Tile getTile(Layer layer, int x, int y) {
-        return palette.getObject(tiles[getIndex(layer, x, y)]);
+        lock.lock();
+        try {
+            return palette.getObject(tiles[getIndex(layer, x, y)]);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void setTile(Layer layer, int x, int y, Tile tile) {
-        tiles[getIndex(layer, x, y)] = palette.getOrCreate(tile);
+        lock.lock();
+        try {
+            tiles[getIndex(layer, x, y)] = palette.getOrCreate(tile);
+        } finally {
+            lock.unlock();
+        }
+
+
     }
 
     @Override

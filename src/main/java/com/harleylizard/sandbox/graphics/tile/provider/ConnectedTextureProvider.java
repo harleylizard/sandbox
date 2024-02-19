@@ -1,8 +1,7 @@
 package com.harleylizard.sandbox.graphics.tile.provider;
 
+import com.harleylizard.sandbox.graphics.tile.Flags;
 import com.harleylizard.sandbox.layer.Layer;
-import com.harleylizard.sandbox.tile.TransparencyLayer;
-import com.harleylizard.sandbox.tile.TileLayers;
 import com.harleylizard.sandbox.tile.Tile;
 import com.harleylizard.sandbox.world.World;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -65,7 +64,7 @@ public final class ConnectedTextureProvider implements TextureProvider {
 
     private static boolean matches(World world, int x, int y) {
         var tile = world.getTile(Layer.FOREGROUND, x, y);
-        return tile != Tile.AIR && TileLayers.getLayer(tile) == TransparencyLayer.SOLID;
+        return Flags.is(tile, Flags.SOLID);
     }
 
     private static int toInt(boolean up, boolean down, boolean left, boolean right) {

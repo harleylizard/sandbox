@@ -45,9 +45,9 @@ public final class World implements TileGetter {
 
     private void updateTileNeighbour(int x, int y, int xOffset, int yOffset) {
         var tile = getTile(Layer.FOREGROUND, x + xOffset, y + yOffset);
-        var behaviour = Tile.getBehaviour(tile);
+        var behaviour = tile.getBehaviour();
         if (behaviour != null) {
-            behaviour.onNeighbourUpdated(this, x + xOffset, y + yOffset);
+            behaviour.onNeighbourUpdated(Layer.FOREGROUND, this, x + xOffset, y + yOffset);
         }
     }
 

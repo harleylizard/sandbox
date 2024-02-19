@@ -16,11 +16,13 @@ public class Tile {
     public static final Tile LOG = new Tile();
     public static final Tile LEAVES = new Tile();
 
-    private static final Map<Tile, TileBehaviour> MAP = Map.of(
-            Tile.TALL_GRASS, new TallGrassTileBehaviour(),
-            Tile.GRASS, new GrassTileBehaviour());
+    private static final Map<Tile, TileBehaviour> MAP = Map.of(Tile.TALL_GRASS, new TallGrassTileBehaviour(), Tile.GRASS, new GrassTileBehaviour());
 
-    public static TileBehaviour getBehaviour(Tile tile) {
-        return MAP.get(tile);
+    public TileBehaviour getBehaviour() {
+        return MAP.get(this);
+    }
+
+    public boolean is(Tag tag) {
+        return tag.has(this);
     }
 }

@@ -1,11 +1,10 @@
 package com.harleylizard.sandbox.world;
 
+import com.harleylizard.sandbox.graphics.tile.Flags;
 import com.harleylizard.sandbox.layer.Layer;
 import com.harleylizard.sandbox.layer.MutableLayeredColumn;
 import com.harleylizard.sandbox.structure.TreeStructure;
-import com.harleylizard.sandbox.tile.TransparencyLayer;
 import com.harleylizard.sandbox.tile.Tile;
-import com.harleylizard.sandbox.tile.TileLayers;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import kdotjpg.opensimplex2.OpenSimplex2;
@@ -68,7 +67,7 @@ public final class WorldGenerator {
 
             if (y == 250 && tree.getProbability(random)) {
                 var down = y - 1;
-                while (TileLayers.getLayer(world.getTile(Layer.FOREGROUND, x, down)) == TransparencyLayer.TRANSPARENT) {
+                while (Flags.is(world.getTile(Layer.FOREGROUND, x, down), Flags.TRANSPARENT)) {
                     down--;
                 }
                 if (world.getTile(Layer.FOREGROUND, x, down - 1) == Tile.DIRT) {

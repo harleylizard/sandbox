@@ -1,9 +1,8 @@
 package com.harleylizard.sandbox.structure;
 
+import com.harleylizard.sandbox.graphics.tile.Flags;
 import com.harleylizard.sandbox.layer.Layer;
-import com.harleylizard.sandbox.tile.TransparencyLayer;
 import com.harleylizard.sandbox.tile.Tile;
-import com.harleylizard.sandbox.tile.TileLayers;
 import com.harleylizard.sandbox.world.World;
 
 import java.util.Random;
@@ -50,7 +49,7 @@ public final class TreeStructure implements Structure {
                 if (distance < 4) {
                     var m = x + j;
                     var n = y + height + k;
-                    if (TileLayers.getLayer(world.getTile(Layer.FOREGROUND, m, n)) == TransparencyLayer.TRANSPARENT) {
+                    if (Flags.is(world.getTile(Layer.FOREGROUND, m, n), Flags.TRANSPARENT)) {
                         world.setTile(Layer.FOREGROUND, m, n, Tile.LEAVES);
                         if (random.nextInt(4) == 0) {
                             world.setTile(Layer.FOREGROUND, m, n, Tile.AIR);
